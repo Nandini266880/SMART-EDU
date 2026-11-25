@@ -1,18 +1,29 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config();
-const sequelize = new Sequelize('campusIQ', 'root', '1234', {
-    host: 'localhost',
-    dialect: 'mysql',
-    logging: false
-});
-try {
-    await sequelize.authenticate();
-    // console.log("Database connected successfully!");
 
-    await sequelize.sync(); 
-    // console.log("All models synchronized successfully!");
-} catch (error) {
-    console.error("Unable to connect to the database:", error);
+const requiredConfig = ['TIDB_HOST', 'TIDB_USER', 'TIDB_PASSWORD', 'TIDB_DB_NAME'];
+const missingConfig = requiredConfig.filter((key) => !process.env[key]);
+
+if (missingConfig.length > 0) {
+    throw new Error(`Missing TiDB configuration in Backend/.env: ${missingConfig.join(', ')}`);
 }
+
+const sequelize = new Sequelize(
+    process.env.TIDB_DB_NAME,
+    process.env.TIDB_USER,
+    process.env.TIDB_PASSWORD,
+    {
+        host: process.env.TIDB_HOST,
+        port: Number(process.env.TIDB_PORT),
+        dialect: 'mysql',
+        dialectOptions: {
+            ssl: {
+                minVersion: 'TLSv1.2',
+                rejectUnauthorized: true,
+            },
+        },
+        logging: false,
+    }
+);
 export default sequelize;

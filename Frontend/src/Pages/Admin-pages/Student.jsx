@@ -14,6 +14,8 @@ const Student = () => {
     course: "",
     year_of_admission: "",
     campus: "",
+    section: "",
+    semester: ""
   });
 
   useEffect(() => {
@@ -98,7 +100,7 @@ const Student = () => {
         Student Management
       </h1>
       <div className="flex justify-center gap-8 mb-12">
-        <button onClick={() => { setShowForm(true); setShowTable(false); setEditingId(null); setFormData({ name: "", email: "", phone: "", roll_number: "", course: "", year_of_admission: "", campus: "" }); }} 
+        <button onClick={() => { setShowForm(true); setShowTable(false); setEditingId(null); setFormData({ name: "", email: "", phone: "", roll_number: "", course: "", year_of_admission: "", campus: "", section: "", semester: "" }); }} 
                 className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg shadow-lg hover:scale-105 transform transition-all duration-300">
           Create
         </button>

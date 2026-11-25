@@ -16,19 +16,28 @@ const App = () => {
           <Route path="/" element={<LoginSignup />} />
 
           {/* Admin Routes */}
-          <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+          {/* <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
             <Route path="/admin" element={<Admin />} />
-          </Route>
+          </Route> */}
 
           {/* Student Routes */}
-          <Route element={<PrivateRoute allowedRoles={["student"]} />}>
+          {/* <Route element={<PrivateRoute allowedRoles={["student"]} />}>
             <Route path="/student" element={<StudentService />} />
-          </Route>
+          </Route> */}
 
           {/* Faculty Routes */}
-          <Route element={<PrivateRoute allowedRoles={["faculty"]} />}>
+          {/* <Route element={<PrivateRoute allowedRoles={["faculty"]} />}>
             <Route path="/faculty" element={<FacultyService />} />
-          </Route>
+          </Route> */}
+
+          {/* Admin Routes */}
+            <Route path="/admin" element={<Admin />} />
+
+          {/* Student Routes */}
+            <Route path="/student" element={<StudentService />} />
+
+          {/* Faculty Routes */}
+            <Route path="/faculty" element={<FacultyService />} />
         </Routes>
       </div>
     </Router>

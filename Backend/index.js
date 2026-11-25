@@ -14,6 +14,7 @@ import details from './Routes/details.js';
 import cors from 'cors'
 import dotenv from 'dotenv';
 import cookieParser from "cookie-parser";
+import sequelize from './models/index.js';
 
 dotenv.config();
 
@@ -43,4 +44,16 @@ app.use('/user', userRoutes); // No authMiddleware for login/register
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));  
+
+try {
+    await sequelize.authenticate();
+    console.log('Connected to the database.');
+
+    await sequelize.sync();
+    console.log('Database models synchronized.');
+
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+} catch (error) {
+    console.error('Unable to start the backend:', error);
+    process.exitCode = 1;
+}
