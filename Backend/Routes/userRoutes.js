@@ -5,13 +5,14 @@ import Admin from '../models/admin.js';
 import express from 'express';
 import { gentoken } from '../utils/jwt.js';
 import { authMiddleware } from '../utils/authMiddleware.js';
-import { sendOTP } from '../utils/emailService.js';
+// import { sendOTP } from '../utils/emailService.js';
 import crypto from 'crypto';
-import redis from 'redis';
+// import redis from 'redis';
 
 const router = express.Router();
-const redisClient = redis.createClient();
-redisClient.connect();
+// Redis is disabled temporarily. Uncomment after configuring a Redis service.
+// const redisClient = redis.createClient();
+// redisClient.connect();
 
 const hashpassword = (password) => {
     const secret = process.env.PASSWORD_SECRET;
@@ -31,7 +32,7 @@ router.post('/register', async (req, res) => {
             Admin.findOne({ where: { email } }),
         ]);
 
-        let role = null;
+        let role = 'admin';
         if (faculty) {
             role = 'faculty';
         } else if (student) {
@@ -149,6 +150,11 @@ router.get('/profile', authMiddleware, async (req, res) => {
     }
 });
 
+router.post('/fp', (req, res) => {
+    return res.status(503).json({ message: 'Password reset is temporarily unavailable.' });
+});
+
+/* Previous Redis-backed implementation, kept for later re-enabling:
 router.post('/fp', async (req, res) => {
     const { email } = req.body;
     try {
@@ -158,7 +164,6 @@ router.post('/fp', async (req, res) => {
         }
 
         const otp = Math.floor(100000 + Math.random() * 900000);
-
         await redisClient.set(`otp:${email}`, otp, 'EX', 300);
 
         const sent = await sendOTP(email, otp);
@@ -175,39 +180,39 @@ router.post('/fp', async (req, res) => {
         });
     }
 });
+*/
 
+router.post('/fp/verify', (req, res) => {
+    return res.status(503).json({ message: 'Password reset is temporarily unavailable.' });
+});
+
+/* Previous Redis-backed implementation, kept for later re-enabling:
 router.post('/fp/verify', async (req, res) => {
     const { email, otp, newPassword } = req.body;
 
     try {
         const storedOtp = await redisClient.get(`otp:${email}`);
-
-
         if (!storedOtp) {
             return res.status(400).json({ message: 'OTP expired or invalid!' });
         }
-
         if (storedOtp !== otp) {
             return res.status(400).json({ message: 'Invalid OTP!' });
         }
 
         const hashedPassword = hashpassword(newPassword);
-
         const user = await User.findOne({ where: { email } });
-
         if (!user) {
             return res.status(404).json({ message: 'User not found!' });
         }
 
         user.password = hashedPassword;
         await user.save();
-
         await redisClient.del(email);
         res.status(200).json({ message: 'Password updated successfully!' });
-
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong!' });
     }
 });
+*/
 
 export default router;
